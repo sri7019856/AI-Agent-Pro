@@ -11,18 +11,18 @@ def ask_pdf(question):
     )
 
     prompt = f"""
-You are an AI assistant.
+        You are an AI assistant.
 
-Answer ONLY from the context below.
+        Answer ONLY from the context below.
 
-Context:
+        Context:
 
-{context}
+        {context}
 
-Question:
+        Question:
 
-{question}
-"""
+        {question}
+    """
 
     response = llm.invoke(prompt)
 

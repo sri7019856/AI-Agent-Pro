@@ -3,6 +3,7 @@ from src.memory.checkpoint import checkpointer
 from src.tools.weather_tool import get_weather
 from src.tools.web_search_tool import web_search
 from src.prompts.system_prompt import SYSTEM_PROMPT
+from src.tools.maps_tool import get_route
 
 from src.llm import llm
 
@@ -34,7 +35,8 @@ def create_chat_agent(checkpointer):
             read_file, 
             find_file,
             get_weather,
-            web_search
+            web_search,
+            get_route
             ],
             system_prompt=SYSTEM_PROMPT,
         checkpointer=checkpointer
