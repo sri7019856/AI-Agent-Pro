@@ -1,0 +1,9 @@
+This is my first AI Agent.
+
+It can:
+- Solve math
+- Tell time
+- Greet users
+- Read text files
+
+Soon it will search the web and use memory.

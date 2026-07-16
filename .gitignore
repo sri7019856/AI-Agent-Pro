@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# SQLite
+chat_memory.db
+
+# Chroma / Vector DB
+chroma_db/
+vector_db/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Python cache
+.pytest_cache/
