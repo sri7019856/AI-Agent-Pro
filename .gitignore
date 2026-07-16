@@ -26,3 +26,7 @@ Thumbs.db
 
 # Python cache
 .pytest_cache/
+
+test_db/
+
+*.sqlite3
