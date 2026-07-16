@@ -4,6 +4,7 @@ from streamlit_folium import st_folium
 
 from src.chat.chat_service import get_ai_response
 from src.tools.maps_tool import get_route
+from src.tools.speech_tool import speak
 
 
 # ---------------------------------------------------
@@ -63,11 +64,36 @@ st.title("🤖 AI Assistant")
 
 
 # ---------------------------------------------------
+# Sidebar Settings
+# ---------------------------------------------------
+st.sidebar.title("⚙ Assistant Settings")
+
+voice_enabled = st.sidebar.checkbox(
+    "🔊 Enable Voice",
+    value=False,
+)
+
+voice_speed = st.sidebar.slider(
+    "Speech Speed",
+    min_value=100,
+    max_value=250,
+    value=170,
+)
+
+voice_volume = st.sidebar.slider(
+    "Volume",
+    min_value=0.0,
+    max_value=1.0,
+    value=1.0,
+)
+
+
+# ---------------------------------------------------
 # Username
 # ---------------------------------------------------
 username = st.text_input(
     "Username",
-    value="guest"
+    value="guest",
 )
 
 
@@ -78,7 +104,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 
-# Display previous messages
+# Display Previous Messages
 for msg in st.session_state.messages:
 
     with st.chat_message(msg["role"]):
@@ -96,7 +122,7 @@ prompt = st.chat_input("Ask me anything...")
 # ---------------------------------------------------
 if prompt:
 
-    # Store user message
+    # Store User Message
     st.session_state.messages.append(
         {
             "role": "user",
@@ -107,9 +133,9 @@ if prompt:
     with st.chat_message("user"):
         st.write(prompt)
 
-    # -----------------------------------------------
-    # MAP REQUEST
-    # -----------------------------------------------
+    # ------------------------------------------------
+    # Route Request
+    # ------------------------------------------------
     if "route from" in prompt.lower():
 
         try:
@@ -123,6 +149,19 @@ if prompt:
                 destination.strip(),
             )
 
+            response = (
+                f"Route from {route['origin']} to {route['destination']}\n"
+                f"Distance: {route['distance']:.1f} km\n"
+                f"Duration: {route['duration']:.1f} minutes"
+            )
+
+            st.session_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": response,
+                }
+            )
+
             with st.chat_message("assistant"):
 
                 st.write(f"📍 **From:** {route['origin']}")
@@ -132,23 +171,19 @@ if prompt:
 
                 display_route(route)
 
-            st.session_state.messages.append(
-                {
-                    "role": "assistant",
-                    "content":
-                        f"Route from {route['origin']} to {route['destination']}\n"
-                        f"Distance: {route['distance']:.1f} km\n"
-                        f"Duration: {route['duration']:.1f} minutes"
-                }
-            )
+            if voice_enabled:
+                speak(
+                    response,
+                    rate=voice_speed,
+                    volume=voice_volume,
+                )
 
         except Exception as e:
-
             st.error(e)
 
-    # -----------------------------------------------
-    # NORMAL AI CHAT
-    # -----------------------------------------------
+    # ------------------------------------------------
+    # Normal AI Chat
+    # ------------------------------------------------
     else:
 
         with st.spinner("Thinking..."):
@@ -167,3 +202,10 @@ if prompt:
 
         with st.chat_message("assistant"):
             st.write(answer)
+
+        if voice_enabled:
+            speak(
+                answer,
+                rate=voice_speed,
+                volume=voice_volume,
+            )
