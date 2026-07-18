@@ -213,7 +213,7 @@ This project is licensed under the MIT License.
 
 # 👨‍💻 Author
 
-**S S Bhajantri**
+**S B Vasanth**
 
 GitHub:
 https://github.com/sri7019856
