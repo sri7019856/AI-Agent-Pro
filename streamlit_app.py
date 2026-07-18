@@ -4,7 +4,7 @@ from streamlit_folium import st_folium
 
 from src.chat.chat_service import get_ai_response
 from src.tools.maps_tool import get_route
-from src.tools.speech_tool import speak
+from src.tools.speech_tool import speech
 
 
 # ---------------------------------------------------
@@ -17,7 +17,6 @@ def display_route(route):
         zoom_start=7,
     )
 
-    # Start Marker
     folium.Marker(
         route["start"],
         popup=route["origin"],
@@ -25,7 +24,6 @@ def display_route(route):
         icon=folium.Icon(color="green"),
     ).add_to(m)
 
-    # Destination Marker
     folium.Marker(
         route["end"],
         popup=route["destination"],
@@ -33,7 +31,6 @@ def display_route(route):
         icon=folium.Icon(color="red"),
     ).add_to(m)
 
-    # Route Line
     coords = [
         [lat, lon]
         for lon, lat in route["geometry"]
@@ -58,34 +55,87 @@ def display_route(route):
 st.set_page_config(
     page_title="AI Assistant",
     page_icon="🤖",
+    layout="wide",
 )
 
-st.title("🤖 AI Assistant")
+st.title("🤖 AI Agent Pro")
+st.caption("Powered by LangGraph • Groq • RAG • Maps • Memory")
 
 
 # ---------------------------------------------------
-# Sidebar Settings
+# Sidebar
 # ---------------------------------------------------
-st.sidebar.title("⚙ Assistant Settings")
+with st.sidebar:
 
-voice_enabled = st.sidebar.checkbox(
-    "🔊 Enable Voice",
-    value=False,
-)
+    st.header("🎤 Voice Assistant")
 
-voice_speed = st.sidebar.slider(
-    "Speech Speed",
-    min_value=100,
-    max_value=250,
-    value=170,
-)
+    voice_enabled = st.toggle(
+        "Enable Voice",
+        value=True,
+    )
 
-voice_volume = st.sidebar.slider(
-    "Volume",
-    min_value=0.0,
-    max_value=1.0,
-    value=1.0,
-)
+    speed = st.slider(
+        "Speech Speed",
+        min_value=100,
+        max_value=250,
+        value=170,
+        step=5,
+        help="Higher = Faster",
+    )
+
+    volume = st.slider(
+        "Volume",
+        min_value=0,
+        max_value=100,
+        value=100,
+        step=5,
+    )
+
+    # speech.set_speed(speed)
+    # speech.set_volume(volume / 100)
+    # ------------------------------------------------------
+    if speed != speech.rate:
+        speech.set_speed(speed)                         
+            # added 
+    if (volume / 100) != speech.volume:
+        speech.set_volume(volume / 100)
+    # ------------------------------------------------------
+
+    st.divider()
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        if st.button("▶ Test"):
+
+            speech.speak(
+                "Hello! I am your AI Assistant."
+            )
+
+    with col2:
+
+        if st.button("⏹ Stop"):
+
+            speech.stop()
+
+    st.divider()
+
+    st.info(
+        """
+This assistant supports:
+
+✅ Conversational Memory
+
+✅ RAG over your documents
+
+✅ Route Maps
+
+✅ Web Search
+
+✅ Voice Responses
+"""
+    )
 
 
 # ---------------------------------------------------
@@ -101,21 +151,26 @@ username = st.text_input(
 # Chat Memory
 # ---------------------------------------------------
 if "messages" not in st.session_state:
+
     st.session_state.messages = []
 
 
+# ---------------------------------------------------
 # Display Previous Messages
+# ---------------------------------------------------
 for msg in st.session_state.messages:
 
     with st.chat_message(msg["role"]):
+
         st.write(msg["content"])
 
 
 # ---------------------------------------------------
 # Chat Input
 # ---------------------------------------------------
-prompt = st.chat_input("Ask me anything...")
-
+prompt = st.chat_input(
+    "Ask me anything..."
+)
 
 # ---------------------------------------------------
 # Process User Input
@@ -134,25 +189,27 @@ if prompt:
         st.write(prompt)
 
     # ------------------------------------------------
-    # Route Request
+    # ROUTE REQUEST
     # ------------------------------------------------
-    if "route from" in prompt.lower():
+    if prompt.lower().startswith("route from"):
 
         try:
 
-            text = prompt.lower().replace("route from", "")
+            text = prompt[10:].strip()
 
-            origin, destination = text.split("to")
+            origin, destination = text.split(" to ", 1)
 
-            route = get_route(
-                origin.strip(),
-                destination.strip(),
-            )
+            with st.spinner("Finding best route..."):
+
+                route = get_route(
+                    origin.strip(),
+                    destination.strip(),
+                )
 
             response = (
-                f"Route from {route['origin']} to {route['destination']}\n"
-                f"Distance: {route['distance']:.1f} km\n"
-                f"Duration: {route['duration']:.1f} minutes"
+                f"📍 Route from **{route['origin']}** to **{route['destination']}**\n\n"
+                f"📏 Distance : **{route['distance']:.1f} km**\n\n"
+                f"⏱ Duration : **{route['duration']:.1f} minutes**"
             )
 
             st.session_state.messages.append(
@@ -164,33 +221,40 @@ if prompt:
 
             with st.chat_message("assistant"):
 
-                st.write(f"📍 **From:** {route['origin']}")
-                st.write(f"🏁 **To:** {route['destination']}")
-                st.write(f"📏 **Distance:** {route['distance']:.1f} km")
-                st.write(f"⏱ **Duration:** {route['duration']:.1f} minutes")
+                st.markdown(response)
 
                 display_route(route)
 
             if voice_enabled:
-                speak(
-                    response,
-                    rate=voice_speed,
-                    volume=voice_volume,
+                speech.speak(
+                    f"Route from {route['origin']} to "
+                    f"{route['destination']}. "
+                    f"Distance is {route['distance']:.1f} kilometers. "
+                    f"Estimated travel time is "
+                    f"{route['duration']:.1f} minutes."
                 )
 
+        except ValueError:
+
+            st.error(
+                "Use the format:\n\n"
+                "route from Bangalore to Mysore"
+            )
+
         except Exception as e:
+
             st.error(e)
 
     # ------------------------------------------------
-    # Normal AI Chat
+    # NORMAL AI CHAT
     # ------------------------------------------------
     else:
 
         with st.spinner("Thinking..."):
 
             answer = get_ai_response(
-                username,
-                prompt,
+                username=username,
+                message=prompt,
             )
 
         st.session_state.messages.append(
@@ -201,11 +265,20 @@ if prompt:
         )
 
         with st.chat_message("assistant"):
+
             st.write(answer)
 
         if voice_enabled:
-            speak(
-                answer,
-                rate=voice_speed,
-                volume=voice_volume,
-            )
+
+            speech.speak(answer)
+
+
+# ---------------------------------------------------
+# Footer
+# ---------------------------------------------------
+st.divider()
+
+st.caption(
+    "🚀 AI Agent Pro | Built using Python, "
+    "LangGraph, Groq, ChromaDB, Streamlit & Folium"
+)

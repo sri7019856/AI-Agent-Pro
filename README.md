@@ -216,7 +216,7 @@ This project is licensed under the MIT License.
 **S B Vasanth**
 
 GitHub:
-https://github.com/sri7019856
+https://github.com/sbvasanth/AI-Agent-Pro
 
 ---
 
