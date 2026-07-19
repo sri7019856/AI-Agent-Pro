@@ -34,4 +34,6 @@ google-auth-oauthlib
 
 pandas
 
+tavily-GitPython
+
 watchdog
