@@ -81,7 +81,7 @@ AI-Agent-Pro
 Clone the repository
 
 ```bash
-git clone https://github.com/sri7019856/AI-Agent-Pro.git
+git clone https://github.com/sbvasanth/AI-Agent-Pro.git
 ```
 
 Move into the project
@@ -194,7 +194,7 @@ The AI Agent can
 
 ---
 
-NOTE:- When ran "streamlit run streamlit_app.py", if you found Groq API key limit as an Error, Kindly remove or delete the chat_memory.db, so the limit decreases. and Assistant work as expected.
+NOTE:- Groq API key has token limitations. if end up getting that error, we have to try AI interactions in the next 24 hours.
 
 
 # 🤝 Contributing
