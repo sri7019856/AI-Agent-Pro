@@ -5,8 +5,6 @@ from streamlit_folium import st_folium
 from src.chat.chat_service import get_ai_response
 from src.tools.maps_tool import get_route
 
-# from src.tools.speech_tool import speech
-
 from src.tools.voice import voice_supported
 
 SPEECH_AVAILABLE = voice_supported()
