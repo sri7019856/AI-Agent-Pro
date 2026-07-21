@@ -28,6 +28,16 @@ steps:
     python -m compileall .
   displayName: 'Compile project'
 
+# Check formatting
+- script: |
+    black --check .
+  displayName: "Check code formatting"
+
+# Run Ruff
+- script: |
+    ruff check .
+  displayName: "Run Ruff"
+
 - script: |
     python -m pytest tests/unit
   displayName: 'Run unit tests'
