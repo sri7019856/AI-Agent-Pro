@@ -1,9 +1,6 @@
 from src.rag.embeddings import embeddings
 
-texts = [
-    "Hello",
-    "How are you?"
-]
+texts = ["Hello", "How are you?"]
 
 vectors = embeddings.embed_documents(texts)
 

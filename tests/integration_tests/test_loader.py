@@ -27,12 +27,7 @@ print("=" * 70)
 # Sample Pages
 # -------------------------------------------------
 
-sample_indices = [
-    0,
-    min(1, len(docs)-1),
-    len(docs)//2,
-    len(docs)-1
-]
+sample_indices = [0, min(1, len(docs) - 1), len(docs) // 2, len(docs) - 1]
 
 shown = set()
 

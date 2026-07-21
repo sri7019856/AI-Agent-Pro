@@ -7,19 +7,12 @@ from src.tools.maps_tool import get_route
 
 from src.llm import llm
 
-from src.tools.math_tools import (
-    multiply, 
-    add, 
-    subtract, 
-    divide
-)
+from src.tools.math_tools import multiply, add, subtract, divide
 
-from src.tools.file_tools import (
-    read_file,
-    find_file
-)
+from src.tools.file_tools import read_file, find_file
 
 from src.tools.system_tools import current_time
+
 
 def create_chat_agent(checkpointer):
 
@@ -27,19 +20,20 @@ def create_chat_agent(checkpointer):
 
     agent = create_agent(
         model=llm,
-        tools=[multiply, 
-            add, 
+        tools=[
+            multiply,
+            add,
             subtract,
-            divide, 
+            divide,
             current_time,
-            read_file, 
+            read_file,
             find_file,
             get_weather,
             web_search,
-            get_route
-            ],
-            system_prompt=SYSTEM_PROMPT,
-        checkpointer=checkpointer
+            get_route,
+        ],
+        system_prompt=SYSTEM_PROMPT,
+        checkpointer=checkpointer,
     )
     print("Agent Created Successfully")
 

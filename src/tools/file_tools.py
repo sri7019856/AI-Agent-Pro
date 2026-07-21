@@ -1,8 +1,8 @@
 from langchain_core.tools import tool
 from pathlib import Path
 
-
 BASE_DIR = Path("documents")
+
 
 @tool
 def find_file(filename: str) -> str:
@@ -28,7 +28,7 @@ def read_file(filename: str) -> str:
     """
     print(f"TOOL CALLED: read_file({filename})")
 
-    path = BASE_DIR / filename  
+    path = BASE_DIR / filename
 
     if not path.exists():
         return f"File '{filename}' was not found."

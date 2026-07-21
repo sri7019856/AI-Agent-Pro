@@ -4,6 +4,7 @@ from streamlit_folium import st_folium
 
 from src.chat.chat_service import get_ai_response
 from src.tools.maps_tool import get_route
+
 # from src.tools.speech_tool import speech
 
 from src.tools.voice import voice_supported
@@ -12,6 +13,7 @@ SPEECH_AVAILABLE = voice_supported()
 
 if SPEECH_AVAILABLE:
     from src.tools.speech_tool import speech
+
 
 # ---------------------------------------------------
 # Display Route on Map
@@ -37,10 +39,7 @@ def display_route(route):
         icon=folium.Icon(color="red"),
     ).add_to(m)
 
-    coords = [
-        [lat, lon]
-        for lon, lat in route["geometry"]
-    ]
+    coords = [[lat, lon] for lon, lat in route["geometry"]]
 
     folium.PolyLine(
         coords,
@@ -113,9 +112,7 @@ with st.sidebar:
 
             if st.button("▶ Test"):
 
-                speech.speak(
-                    "Hello! I am your AI Assistant."
-                )
+                speech.speak("Hello! I am your AI Assistant.")
 
         with col2:
 
@@ -129,14 +126,11 @@ with st.sidebar:
 
         st.header("🎤 Voice Assistant")
 
-        st.info(
-            "Voice responses are available only in the Windows desktop version."
-        )
+        st.info("Voice responses are available only in the Windows desktop version.")
 
     st.divider()
 
-    st.info(
-        """
+    st.info("""
 This assistant supports:
 
 ✅ Conversational Memory
@@ -148,8 +142,7 @@ This assistant supports:
 ✅ Web Search
 
 ✅ Voice Responses (Desktop)
-"""
-    )
+""")
 
 
 # ---------------------------------------------------
@@ -182,9 +175,7 @@ for msg in st.session_state.messages:
 # ---------------------------------------------------
 # Chat Input
 # ---------------------------------------------------
-prompt = st.chat_input(
-    "Ask me anything..."
-)
+prompt = st.chat_input("Ask me anything...")
 
 # ---------------------------------------------------
 # Process User Input
@@ -251,10 +242,7 @@ if prompt:
 
         except ValueError:
 
-            st.error(
-                "Use the format:\n\n"
-                "route from Bangalore to Mysore"
-            )
+            st.error("Use the format:\n\n" "route from Bangalore to Mysore")
 
         except Exception as e:
 

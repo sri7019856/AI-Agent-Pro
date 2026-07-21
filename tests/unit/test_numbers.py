@@ -3,4 +3,4 @@ def test_even_number():
 
 
 def test_power():
-    assert 2 ** 5 == 32
+    assert 2**5 == 32

@@ -24,16 +24,13 @@ def get_ai_response(username, message):
                     }
                 ]
             },
-            config={
-                "configurable": {
-                    "thread_id": username
-                }
-            }
+            config={"configurable": {"thread_id": username}},
         )
 
         print("Agent finished")
 
         return result["messages"][-1].content
+
 
 def start_chat():
 
@@ -80,11 +77,7 @@ def start_chat():
                             }
                         ]
                     },
-                    config={
-                        "configurable": {
-                            "thread_id": username
-                        }
-                    }
+                    config={"configurable": {"thread_id": username}},
                 )
 
                 print("\nAssistant:", result["messages"][-1].content)

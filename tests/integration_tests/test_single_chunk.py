@@ -8,7 +8,7 @@ chunks = split_documents(docs)
 print("Chunks:", len(chunks))
 
 for i, chunk in enumerate(chunks):
-    print("="*60)
+    print("=" * 60)
     print("Chunk", i)
     print("Length:", len(chunk.page_content))
     print(chunk.page_content)

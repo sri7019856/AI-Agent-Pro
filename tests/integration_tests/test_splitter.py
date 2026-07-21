@@ -41,10 +41,10 @@ print("=" * 70)
 
 sample_indices = [
     0,
-    min(1, len(chunks)-1),
-    min(2, len(chunks)-1),
-    len(chunks)//2,
-    len(chunks)-1
+    min(1, len(chunks) - 1),
+    min(2, len(chunks) - 1),
+    len(chunks) // 2,
+    len(chunks) - 1,
 ]
 
 print("\nSample Chunks\n")

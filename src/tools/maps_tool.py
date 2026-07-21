@@ -1,9 +1,6 @@
 import requests
 
-
-HEADERS = {
-    "User-Agent": "AI-Agent-Pro"
-}
+HEADERS = {"User-Agent": "AI-Agent-Pro"}
 
 
 def geocode(place: str):

@@ -4,6 +4,7 @@ from src.config import TAVILY_API_KEY
 
 client = TavilyClient(api_key=TAVILY_API_KEY)
 
+
 def web_search(query: str):
     """Search the web and return concise results."""
 

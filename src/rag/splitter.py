@@ -16,13 +16,10 @@ def split_documents(documents, chunk_size=500, chunk_overlap=100):
 
         for i in range(0, len(text), step):
 
-            chunk_text = text[i:i + chunk_size]
+            chunk_text = text[i : i + chunk_size]
 
             chunks.append(
-                Document(
-                    page_content=chunk_text,
-                    metadata=doc.metadata.copy()
-                )
+                Document(page_content=chunk_text, metadata=doc.metadata.copy())
             )
 
     return chunks

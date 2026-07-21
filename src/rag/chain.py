@@ -6,9 +6,7 @@ def ask_pdf(question):
 
     docs = retriever.invoke(question)
 
-    context = "\n\n".join(
-        doc.page_content for doc in docs
-    )
+    context = "\n\n".join(doc.page_content for doc in docs)
 
     prompt = f"""
         You are an AI assistant.

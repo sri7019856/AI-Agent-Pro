@@ -3,7 +3,6 @@ from pathlib import Path
 from pypdf import PdfReader
 from langchain_core.documents import Document
 
-
 DOCUMENTS_DIR = Path("documents")
 
 
@@ -13,7 +12,7 @@ def load_pdf(filename: str):
 
     if not path.exists():
         raise FileNotFoundError(
-            f"{path} does not exist. Put your PDF inside the 'documents' folder."                      
+            f"{path} does not exist. Put your PDF inside the 'documents' folder."
         )
 
     reader = PdfReader(path)

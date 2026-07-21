@@ -7,11 +7,7 @@ def get_weather(city: str):
     """Get the current weather of a city."""
     url = "http://api.weatherapi.com/v1/current.json"
 
-    params = {
-        "key": API_KEY,
-        "q": city,
-        "aqi": "no"
-    }
+    params = {"key": API_KEY, "q": city, "aqi": "no"}
 
     response = requests.get(url, params=params)
 
