@@ -1,10 +1,10 @@
-print("=" * 60)
-print("LOADING LLM.PY")
-print("=" * 60)
-
 from dotenv import load_dotenv
 import os
 from langchain_groq import ChatGroq
+
+print("=" * 60)
+print("LOADING LLM.PY")
+print("=" * 60)
 
 load_dotenv()
 

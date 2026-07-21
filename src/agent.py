@@ -1,5 +1,4 @@
 from langchain.agents import create_agent
-from src.memory.checkpoint import checkpointer
 from src.tools.weather_tool import get_weather
 from src.tools.web_search_tool import web_search
 from src.prompts.system_prompt import SYSTEM_PROMPT

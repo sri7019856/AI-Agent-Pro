@@ -52,7 +52,7 @@ class SpeechManager:
 
             try:
                 engine.stop()
-            except:
+            except Exception:
                 pass
 
             with self.lock:
