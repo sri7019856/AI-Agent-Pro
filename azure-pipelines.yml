@@ -2,111 +2,142 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 variables:
   pythonVersion: '3.12'
 
-steps:
+############################################################
+# BUILD
+############################################################
 
-# ---------------------------------------
-# Install Python
-# ---------------------------------------
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(pythonVersion)'
-  displayName: 'Use Python $(pythonVersion)'
+stages:
 
-# ---------------------------------------
-# Upgrade pip
-# ---------------------------------------
-- script: |
-    python -m pip install --upgrade pip
-  displayName: 'Upgrade pip'
+- stage: Build
+  displayName: "Build Stage"
 
-# ---------------------------------------
-# Install dependencies
-# ---------------------------------------
-- script: |
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+  jobs:
 
-# ---------------------------------------
-# Verify installation
-# ---------------------------------------
-- script: |
-    python --version
-    pip --version
-  displayName: 'Verify Python'
+  - job: BuildJob
 
-# ---------------------------------------
-# Check formatting
-# ---------------------------------------
-- script: |
-    black --check .
-  displayName: 'Check code formatting'
+    steps:
 
-# ---------------------------------------
-# Run Ruff
-# ---------------------------------------
-- script: |
-    ruff check .
-  displayName: 'Run Ruff Linter'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(pythonVersion)'
 
-# ---------------------------------------
-# Compile source
-# ---------------------------------------
-- script: |
-    python -m compileall src
-  displayName: 'Compile Project'
+    - script: |
+        python -m pip install --upgrade pip
+      displayName: Upgrade pip
 
-# ---------------------------------------
-# Run Unit Tests with Coverage
-# ---------------------------------------
-- script: |
-    python -m pytest tests/unit \
-      --cov=src \
-      --cov-report=term-missing \
-      --cov-report=xml \
-      --cov-fail-under=10
-  displayName: 'Run Unit Tests with Coverage'
+    - script: |
+        pip install -r requirements.txt
+      displayName: Install Dependencies
 
-# ---------------------------------------
-# Publish Code Coverage
-# ---------------------------------------
-- task: PublishCodeCoverageResults@2
-  displayName: 'Publish Code Coverage'
+    - script: |
+        python --version
+        pip --version
+      displayName: Verify Python
 
-  inputs:
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'
+    - script: |
+        python -m compileall src
+      displayName: Compile Project
 
-# ---------------------------------------
-# Verify Docker
-# ---------------------------------------
-- script: |
-    docker version
-    docker buildx version
-  displayName: 'Verify Docker'
+############################################################
+# QUALITY
+############################################################
 
-# ---------------------------------------
-# Build Docker Image
-# ---------------------------------------
-- task: Docker@2
-  displayName: 'Build Docker Image'
+- stage: Quality
+  displayName: "Quality Checks"
 
-  inputs:
-    command: build
-    Dockerfile: Dockerfile
-    repository: ai-agent-pro
-    tags: |
-      $(Build.BuildId)
-      latest
+  dependsOn: Build
 
-# ---------------------------------------
-# Build Complete
-# ---------------------------------------
-- script: |
-    echo "==========================================="
-    echo " AI-Agent-Pro Build Successful"
-    echo "==========================================="
-  displayName: 'Build Complete'
+  jobs:
+
+  - job: Lint
+
+    steps:
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(pythonVersion)'
+
+    - script: |
+        pip install -r requirements.txt
+      displayName: Install Dependencies
+
+    - script: |
+        black --check .
+      displayName: Black
+
+    - script: |
+        ruff check .
+      displayName: Ruff
+
+############################################################
+# TEST
+############################################################
+
+- stage: Testing
+  displayName: "Unit Testing"
+
+  dependsOn: Quality
+
+  jobs:
+
+  - job: Tests
+
+    steps:
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(pythonVersion)'
+
+    - script: |
+        pip install -r requirements.txt
+      displayName: Install Dependencies
+
+    - script: |
+        python -m pytest tests/unit \
+          --cov=src \
+          --cov-report=term-missing \
+          --cov-report=xml \
+          --cov-fail-under=10
+      displayName: Run Unit Tests
+
+    - task: PublishCodeCoverageResults@2
+      displayName: Publish Code Coverage
+      inputs:
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'
+
+############################################################
+# PACKAGE
+############################################################
+
+- stage: Package
+  displayName: "Package"
+
+  dependsOn: Testing
+
+  jobs:
+
+  - job: Docker
+
+    steps:
+
+    - script: |
+        docker version
+        docker buildx version
+      displayName: Verify Docker
+
+    - task: Docker@2
+      displayName: Build Docker Image
+
+      inputs:
+        command: build
+        Dockerfile: Dockerfile
+        repository: ai-agent-pro
+
+        tags: |
+          $(Build.BuildId)
+          latest
