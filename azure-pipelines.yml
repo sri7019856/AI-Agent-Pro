@@ -80,6 +80,16 @@ steps:
   inputs:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'
 
+- task: Docker@2
+  displayName: "Build Docker Image"
+  inputs:
+    command: build
+    Dockerfile: Dockerfile
+    repository: ai-agent
+    tags: |
+      $(Build.BuildId)
+      latest
+
 # ---------------------------------------
 # Build Complete
 # ---------------------------------------
